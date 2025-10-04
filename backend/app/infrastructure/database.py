@@ -29,6 +29,11 @@ class Database:
         """Create database indexes"""
         await self.database.users.create_index("email", unique=True)
         await self.database.users.create_index("created_at")
+        
+        # Auth users indexes
+        await self.database.auth_users.create_index("email", unique=True)
+        await self.database.auth_users.create_index("created_at")
+        await self.database.auth_users.create_index("is_active")
 
 
 database = Database()

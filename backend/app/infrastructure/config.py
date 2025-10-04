@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     # Cache
     cache_ttl: int = Field(default=60, env="CACHE_TTL")
     
+    # JWT
+    jwt_secret_key: str = Field(default="your-secret-key-change-in-production", env="JWT_SECRET_KEY")
+    jwt_algorithm: str = Field(default="HS256", env="JWT_ALGORITHM")
+    jwt_expire_days: int = Field(default=3, env="JWT_EXPIRE_DAYS")
+    
     class Config:
         """Pydantic configuration."""
         env_file = ".env"
