@@ -1,8 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.dependencies import get_user_service
+from app.api.dependencies import get_user_service, get_auth_service
 from app.application.services.user_service import UserService
-from app.api.routes.users.schemas import PaginatedResponse, PaginationParams, UserResponse
+from app.application.services.auth_service import AuthService
+from app.api.routes.users.schemas import (
+    PaginatedResponse,
+    PaginationParams, 
+    UserResponse, 
+    CreateUserRequest
+)
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -48,4 +54,54 @@ async def get_users(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to fetch users: {str(e)}"
+        )
+
+
+@router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def create_user(
+    user_request: CreateUserRequest,
+    user_service: UserService = Depends(get_user_service),
+    auth_service: AuthService = Depends(get_auth_service),
+):
+    """Create a new user with authentication"""
+    try:
+        # Create authenticated user first
+        _ = await auth_service.create_user(
+            email=user_request.email,
+            password=user_request.password
+        )
+        
+        # Create regular user entity
+        from app.domain.entities.user import User
+        
+        user = User(
+            name=user_request.name,
+            email=user_request.email
+        )
+        
+        # Create user in the regular users collection
+        created_user = await user_service.create_user(user)
+        
+        return UserResponse(
+            id=created_user.id,
+            name=created_user.name,
+            email=created_user.email,
+            created_at=created_user.created_at
+        )
+    
+    except ValueError as e:
+        if "already exists" in str(e).lower():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="User with this email already exists"
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=str(e)
+            )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create user: {str(e)}"
         )

@@ -6,8 +6,6 @@ from app.api.routes import health_router, user_router, auth_router
 from app.infrastructure.logging import configure_logging, get_logger
 from app.infrastructure.database import database
 from app.infrastructure.cache import cache_service
-from app.application.services.system_user_service import SystemUserService
-from app.api.dependencies import get_auth_service
 
 
 logger = get_logger(__name__)
@@ -27,15 +25,6 @@ async def lifespan(app: FastAPI):
     
     await cache_service.connect()
     logger.info("Connected to cache")
-    
-    # Create system user for testing
-    try:
-        auth_service = get_auth_service()
-        system_user_service = SystemUserService(auth_service)
-        await system_user_service.create_system_user()
-        logger.info("System user setup completed")
-    except Exception as e:
-        logger.error(f"Failed to create system user: {e}")
     
     yield
     

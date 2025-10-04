@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from pymongo.errors import DuplicateKeyError
@@ -18,8 +18,8 @@ class MongoAuthRepository(AuthRepository):
     async def create_user(self, user: AuthUser) -> AuthUser:
         """Create a new authenticated user"""
         user_dict = user.model_dump(exclude={"id"})
-        user_dict["created_at"] = datetime.utcnow()
-        user_dict["updated_at"] = datetime.utcnow()
+        user_dict["created_at"] = datetime.now(timezone.utc)
+        user_dict["updated_at"] = datetime.now(timezone.utc)
         
         try:
             result = await database.database[self.collection_name].insert_one(user_dict)
@@ -64,7 +64,7 @@ class MongoAuthRepository(AuthRepository):
         from bson import ObjectId
         
         user_dict = user.model_dump(exclude={"id"})
-        user_dict["updated_at"] = datetime.utcnow()
+        user_dict["updated_at"] = datetime.now(timezone.utc)
         
         await database.database[self.collection_name].update_one(
             {"_id": ObjectId(user.id)},

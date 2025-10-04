@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
 class User(BaseModel):
@@ -9,7 +9,7 @@ class User(BaseModel):
     
     id: Optional[str] = None
     name: str = Field(..., min_length=1, max_length=100)
-    email: str = Field(..., pattern=r'^[^@]+@[^@]+\.[^@]+$')
+    email: EmailStr = Field(..., description="User email")
     created_at: Optional[datetime] = None
     
     class Config:

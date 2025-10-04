@@ -13,9 +13,9 @@ class JWTTokenService(TokenService):
     
     def __init__(self):
         """Initialize token service"""
-        self.secret_key = getattr(settings, 'jwt_secret_key', 'your-secret-key-change-in-production')
-        self.algorithm = "HS256"
-        self.access_token_expire_minutes = 3 * 24 * 60  # 3 days in minutes
+        self.secret_key =settings.jwt_secret_key
+        self.algorithm =settings.jwt_algorithm
+        self.access_token_expire_minutes =settings.jwt_expire_days * 24 * 60  # 3 days in minutes
     
     async def create_token(self, user: AuthUser) -> Token:
         """Create JWT token for user"""

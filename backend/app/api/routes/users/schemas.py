@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
 class UserResponse(BaseModel):
@@ -22,6 +22,13 @@ class PaginationParams(BaseModel):
     """Schema for pagination parameters"""
     skip: int = Field(default=0, ge=0, description="Number of items to skip")
     limit: int = Field(default=10, ge=1, le=100, description="Number of items to return")
+
+
+class CreateUserRequest(BaseModel):
+    """Schema for creating a user"""
+    name: str = Field(..., min_length=1, max_length=100, description="User name")
+    email: EmailStr = Field(..., description="User email")
+    password: str = Field(..., min_length=6, max_length=72, description="User password")
 
 
 class PaginatedResponse(BaseModel):

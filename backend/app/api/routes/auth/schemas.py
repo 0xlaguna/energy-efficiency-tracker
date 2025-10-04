@@ -1,10 +1,10 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
 class LoginRequest(BaseModel):
     """Login request schema"""
     
-    email: str = Field(..., pattern=r'^[^@]+@[^@]+\.[^@]+$', description="User email")
+    email: EmailStr = Field(..., description="User email")
     password: str = Field(..., min_length=1, description="User password")
 
 

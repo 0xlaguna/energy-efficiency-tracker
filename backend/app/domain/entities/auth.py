@@ -1,14 +1,14 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
 class AuthUser(BaseModel):
     """Authenticated user domain entity"""
     
     id: Optional[str] = None
-    email: str = Field(..., pattern=r'^[^@]+@[^@]+\.[^@]+$')
+    email: EmailStr = Field(..., description="User email")
     password_hash: str
     is_active: bool = Field(default=True)
     created_at: Optional[datetime] = None
@@ -32,5 +32,5 @@ class Token(BaseModel):
 class LoginRequest(BaseModel):
     """Login request domain entity"""
     
-    email: str = Field(..., pattern=r'^[^@]+@[^@]+\.[^@]+$')
+    email: EmailStr = Field(..., description="User email")
     password: str = Field(..., min_length=1)
