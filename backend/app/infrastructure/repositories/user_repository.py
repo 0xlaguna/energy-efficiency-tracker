@@ -51,6 +51,13 @@ class MongoDBUserRepository(UserRepository):
         """Get total count of users"""
         return await self.collection.count_documents({})
     
+    async def get_by_email(self, email: str) -> Optional[User]:
+        """Get user by email"""
+        user_doc = await self.collection.find_one({"email": email})
+        if user_doc:
+            return self._document_to_user(user_doc)
+        return None
+    
     def _document_to_user(self, user_doc: dict) -> User:
         """Convert MongoDB document to User entity"""
         user_doc["id"] = str(user_doc["_id"])

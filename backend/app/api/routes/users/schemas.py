@@ -31,6 +31,11 @@ class CreateUserRequest(BaseModel):
     password: str = Field(..., min_length=6, max_length=72, description="User password")
 
 
+class UserProfileResponse(BaseModel):
+    """Schema for user profile response"""
+    user: UserResponse
+
+
 class PaginatedResponse(BaseModel):
     """Schema for paginated response"""
     items: List[UserResponse]

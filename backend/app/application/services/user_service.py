@@ -30,3 +30,7 @@ class UserService:
     async def get_users_count(self) -> int:
         """Get total count of users"""
         return await self.user_repository.count()
+    
+    async def get_user_by_email(self, email: str) -> User | None:
+        """Get user by email"""
+        return await self.user_repository.get_by_email(email)

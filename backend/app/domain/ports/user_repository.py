@@ -27,3 +27,8 @@ class UserRepository(ABC):
     async def count(self) -> int:
         """Get total count of users"""
         pass
+    
+    @abstractmethod
+    async def get_by_email(self, email: str) -> Optional[User]:
+        """Get user by email"""
+        pass

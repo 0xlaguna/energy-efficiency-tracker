@@ -3,12 +3,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from app.api.dependencies import get_user_service, get_auth_service
 from app.application.services.user_service import UserService
 from app.application.services.auth_service import AuthService
+from app.api.middleware.auth import get_current_user
 from app.api.routes.users.schemas import (
     PaginatedResponse,
     PaginationParams, 
     UserResponse, 
-    CreateUserRequest
+    CreateUserRequest,
+    UserProfileResponse
 )
+from app.domain.entities.auth import AuthUser
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -104,4 +107,41 @@ async def create_user(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to create user: {str(e)}"
+        )
+
+
+@router.get("/me", response_model=UserProfileResponse)
+async def get_current_user_profile(
+    current_user: AuthUser = Depends(get_current_user),
+    user_service: UserService = Depends(get_user_service),
+):
+    """Get current user's profile information"""
+    try:
+        # Get user profile from users collection
+        user_profile = await user_service.get_user_by_email(current_user.email)
+        
+        if not user_profile:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User profile not found"
+            )
+        
+        # Create user response
+        user_response = UserResponse(
+            id=user_profile.id,
+            name=user_profile.name,
+            email=user_profile.email,
+            created_at=user_profile.created_at
+        )
+        
+        return UserProfileResponse(
+            user=user_response
+        )
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get user profile: {str(e)}"
         )
