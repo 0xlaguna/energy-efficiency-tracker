@@ -25,7 +25,7 @@ const useInitialGetMe = () => {
     Authorization: `Bearer ${token}`,
   }
 
-  const { isError, isLoading, isSuccess, data, refetch } = useQuery<
+  const { isError, error, isLoading, isSuccess, data, refetch } = useQuery<
     MeInfo,
     Error
   >({
@@ -36,6 +36,7 @@ const useInitialGetMe = () => {
 
   return {
     getMeError: isError,
+    getMeErrorData: error,
     getMeLoading: isLoading || !token,
     getMeSuccess: isSuccess,
     getMeData: data,

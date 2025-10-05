@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     cache_ttl: int = Field(default=60, env="CACHE_TTL")
     
     # JWT
-    jwt_secret_key: str = Field(default="definetly-not-a-secret-key", env="JWT_SECRET_KEY")
+    jwt_secret_key: str = Field(default="definitely-not-a-secret-key", env="JWT_SECRET_KEY")
     jwt_algorithm: str = Field(default="HS256", env="JWT_ALGORITHM")
     jwt_expire_days: int = Field(default=3, env="JWT_EXPIRE_DAYS")
     
