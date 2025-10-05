@@ -1,14 +1,21 @@
 "use client"
 
-import { useAuth } from "@/lib/auth-client"
+import { useTransition } from "react"
+import { signOut } from "@/lib/action"
 import { Button } from "@/components/ui/button"
 
 export function LogoutButton() {
-  const { signOut, loading } = useAuth()
+  const [pending, startTransition] = useTransition()
+
+  const handleSignOut = () => {
+    startTransition(() => {
+      signOut()
+    })
+  }
 
   return (
-    <Button onClick={signOut} disabled={loading} variant="outline">
-      {loading ? "Signing out..." : "Sign Out"}
+    <Button onClick={handleSignOut} disabled={pending} variant="outline">
+      {pending ? "Signing out..." : "Sign Out"}
     </Button>
   )
 }

@@ -31,7 +31,6 @@ class Settings(BaseSettings):
     
     class Config:
         """Pydantic configuration."""
-        env_file = ".env"
         case_sensitive = False
 
 
