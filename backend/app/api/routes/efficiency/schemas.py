@@ -82,6 +82,18 @@ class BuildingCalculationsResponse(BaseModel):
     total_count: int
 
 
+class AllBuildingsSummaryResponse(BaseModel):
+    """All buildings summary response schema"""
+    
+    buildings: List[BuildingEfficiencySummaryResponse] = Field(..., description="List of building summaries")
+    total_buildings: int = Field(..., description="Total number of buildings")
+    page: int = Field(..., description="Current page number")
+    limit: int = Field(..., description="Number of items per page")
+    total_pages: int = Field(..., description="Total number of pages")
+    has_next: bool = Field(..., description="Whether there is a next page")
+    has_prev: bool = Field(..., description="Whether there is a previous page")
+
+
 class ErrorResponse(BaseModel):
     """Error response schema"""
     detail: str = Field(..., description="Error message")

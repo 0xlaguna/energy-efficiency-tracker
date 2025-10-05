@@ -45,3 +45,7 @@ class EfficiencyRepository(ABC):
     async def count_by_building_id(self, building_id: str) -> int:
         """Get count of calculations for a building"""
         pass
+    
+    async def get_all_buildings_summary(self, skip: int = 0, limit: int = 100) -> tuple[List[BuildingEfficiencySummary], int]:
+        """Get summary for all buildings with pagination"""
+        pass

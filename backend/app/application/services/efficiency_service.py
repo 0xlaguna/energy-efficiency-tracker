@@ -302,6 +302,24 @@ class EfficiencyService:
 
         return calculation
 
+    async def get_all_buildings_summary(self, skip: int = 0, limit: int = 100) -> tuple[List[BuildingEfficiencySummary], int]:
+        """Get summary for all buildings with Redis caching and pagination"""
+
+        cached_data = None #await self.cache_service.get(cache_key)
+        if cached_data:
+            try:
+                cache_result = json.loads(cached_data)
+                summaries = [BuildingEfficiencySummary(**summary) for summary in cache_result["summaries"]]
+                total_count = cache_result["total_count"]
+                return summaries, total_count
+            except Exception as e:
+                logger.error(f"Error deserializing all buildings summary: {e}")
+        
+        # Get from database
+        summaries, total_count = await self.efficiency_repository.get_all_buildings_summary(skip, limit)
+        
+        return summaries, total_count
+
     async def clear_cache(self, building_id: str = None):
         """Clear cached data for a building or all efficiency data"""
         if building_id:

@@ -11,7 +11,8 @@ from app.api.routes.efficiency.schemas import (
     BuildingEfficiencySummaryResponse,
     BuildingCalculationsResponse,
     PeriodEfficiencyMetricsResponse,
-    EfficiencySummaryResponse
+    EfficiencySummaryResponse,
+    AllBuildingsSummaryResponse
 )
 
 router = APIRouter(prefix="/efficiency", tags=["efficiency"])
@@ -309,4 +310,95 @@ async def get_building_summary(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to get building summary: {str(e)}"
+        )
+
+
+@router.get("/buildings", response_model=AllBuildingsSummaryResponse)
+async def get_all_buildings_summary(
+    page: int = 1,
+    limit: int = 100,
+    current_user: AuthUser = Depends(get_current_user),
+    efficiency_service: EfficiencyService = Depends(get_efficiency_service),
+):
+    """Get summary for all buildings with pagination"""
+    try:
+        # Validate pagination parameters
+        if page < 1:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Page must be greater than 0"
+            )
+        if limit < 1 or limit > 1000:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Limit must be between 1 and 1000"
+            )
+        
+        skip = (page - 1) * limit
+        summaries, total_count = await efficiency_service.get_all_buildings_summary(skip, limit)
+        
+        # Convert to response format
+        building_summaries = []
+        for summary in summaries:
+            # Convert latest calculation if exists
+            latest_calculation_response = None
+            if summary.latest_calculation:
+                latest_calculation_response = CalculateEfficiencyResponse(
+                    id=summary.latest_calculation.id,
+                    building_id=summary.latest_calculation.building_id,
+                    measure_name=summary.latest_calculation.measure_name,
+                    calculation_timestamp=summary.latest_calculation.calculation_timestamp,
+                    periods=[
+                        PeriodEfficiencyMetricsResponse(
+                            period=period.period,
+                            time_range=period.time_range,
+                            days=period.days,
+                            electric_savings_kwh=period.electric_savings_kwh,
+                            gas_savings_therms=period.gas_savings_therms,
+                            electric_cost_savings=period.electric_cost_savings,
+                            gas_cost_savings=period.gas_cost_savings,
+                            total_cost_savings=period.total_cost_savings,
+                            electric_efficiency_improvement=period.electric_efficiency_improvement,
+                            gas_efficiency_improvement=period.gas_efficiency_improvement,
+                            overall_efficiency_improvement=period.overall_efficiency_improvement
+                        ) for period in summary.latest_calculation.periods
+                    ],
+                    summary=EfficiencySummaryResponse(
+                        total_electric_savings_kwh=summary.latest_calculation.summary.total_electric_savings_kwh,
+                        total_gas_savings_therms=summary.latest_calculation.summary.total_gas_savings_therms,
+                        total_electric_cost_savings=summary.latest_calculation.summary.total_electric_cost_savings,
+                        total_gas_cost_savings=summary.latest_calculation.summary.total_gas_cost_savings,
+                        total_cost_savings=summary.latest_calculation.summary.total_cost_savings,
+                        average_electric_efficiency_improvement=summary.latest_calculation.summary.average_electric_efficiency_improvement,
+                        average_gas_efficiency_improvement=summary.latest_calculation.summary.average_gas_efficiency_improvement,
+                        overall_efficiency_improvement=summary.latest_calculation.summary.overall_efficiency_improvement,
+                        performance_grade=summary.latest_calculation.summary.performance_grade
+                    ),
+                    created_at=summary.latest_calculation.created_at
+                )
+            
+            building_summaries.append(BuildingEfficiencySummaryResponse(
+                building_id=summary.building_id,
+                total_calculations=summary.total_calculations,
+                latest_calculation=latest_calculation_response,
+                best_performance_grade=summary.best_performance_grade,
+                average_efficiency_improvement=summary.average_efficiency_improvement,
+                total_cost_savings=summary.total_cost_savings,
+                created_at=summary.created_at
+            ))
+        
+        return AllBuildingsSummaryResponse(
+            buildings=building_summaries,
+            total_buildings=total_count,
+            page=page,
+            limit=limit,
+            total_pages=(total_count + limit - 1) // limit,
+            has_next=page * limit < total_count,
+            has_prev=page > 1
+        )
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get all buildings summary: {str(e)}"
         )
