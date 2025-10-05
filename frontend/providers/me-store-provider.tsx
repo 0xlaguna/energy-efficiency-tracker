@@ -15,7 +15,7 @@ export interface MeStoreProviderProps {
 
 export const MeStoreProvider = ({ children, state }: MeStoreProviderProps) => {
   const storeRef = useRef<MeStoreApi>(createMeStore(state))
-  
+
   if (!storeRef.current) {
     storeRef.current = createMeStore(state)
   }

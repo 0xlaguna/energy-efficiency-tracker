@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from app.api.routes import health_router, user_router, auth_router
 
@@ -43,6 +44,13 @@ app = FastAPI(
     description="API for energy efficiency tracker",
     version="0.1.0",
     lifespan=lifespan,
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 app.include_router(health_router, prefix=API_PREFIX)
 app.include_router(user_router, prefix=API_PREFIX)
