@@ -9,9 +9,15 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi[standard]>=0.118.0",
-    "motor>=3.7.1",
+    "pydantic-settings>=2.11.0",
+    "pymongo>=4.0.0",
     "redis>=6.4.0",
     "structlog>=25.4.0",
+    "python-jose[cryptography]>=3.5.0",
+    "passlib[bcrypt]>=1.7.4",
+    "bcrypt==4.3.0",
+    "python-multipart>=0.0.20",
+    "email-validator>=2.3.0",
 ]
 
 [dependency-groups]
