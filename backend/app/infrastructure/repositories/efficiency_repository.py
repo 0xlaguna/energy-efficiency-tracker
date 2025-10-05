@@ -133,16 +133,31 @@ class MongodbEfficiencyRepository(EfficiencyRepository):
         """Get count of calculations for a building"""
         return await self.collection.count_documents({"building_id": building_id})
     
-    async def get_all_buildings_summary(self, skip: int = 0, limit: int = 100) -> tuple[List[BuildingEfficiencySummary], int]:
-        """Get summary for all buildings using optimized aggregation pipeline with pagination"""
+    async def get_all_buildings_summary(self, skip: int = 0, limit: int = 100, search: str = None) -> tuple[List[BuildingEfficiencySummary], int]:
+        """Get summary for all buildings using optimized aggregation pipeline with pagination and search"""
         
-        # First, get total count of unique buildings
-        total_buildings = await self.collection.distinct("building_id")
+        # Build match filter for search
+        match_filter = {}
+        if search:
+            match_filter["building_id"] = {"$regex": search, "$options": "i"}  # Case-insensitive search
+        
+        # Counts
+        if search:
+            total_buildings = await self.collection.distinct("building_id", match_filter)
+        else:
+            total_buildings = await self.collection.distinct("building_id")
         total_count = len(total_buildings)
         
         # Pipeline to get buildings with their summaries
         pipeline = [
             {"$sort": {"created_at": -1}},  # Sort by created_at descending first
+        ]
+        
+        # Add match filter if search is provided
+        if search:
+            pipeline.append({"$match": match_filter})
+        
+        pipeline.extend([
             {
                 "$group": {
                     "_id": "$building_id",
@@ -158,7 +173,7 @@ class MongodbEfficiencyRepository(EfficiencyRepository):
             {"$sort": {"latest_created_at": -1}},
             {"$skip": skip},
             {"$limit": limit}
-        ]
+        ])
         
         cursor = await self.collection.aggregate(pipeline)
         results = await cursor.to_list(None)

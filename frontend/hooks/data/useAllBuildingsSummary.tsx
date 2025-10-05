@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import { AllBuildingsSummaryResponse } from "@/types/v0/efficiency"
 import { GET } from "@/lib/api/api-client"
 
-const useAllBuildingsSummary = (page: number, limit: number) => {
+const useAllBuildingsSummary = (page: number, limit: number, search?: string) => {
   const [bearerToken, setBearerToken] = useState<string | null>(null)
 
   useEffect(() => {
@@ -29,11 +29,11 @@ const useAllBuildingsSummary = (page: number, limit: number) => {
     AllBuildingsSummaryResponse,
     Error
   >({
-    queryKey: ["efficiency-all-buildings-summary", page, limit],
+    queryKey: ["efficiency-all-buildings-summary", page, limit, search],
     queryFn: () =>
       GET<AllBuildingsSummaryResponse>(
         `/efficiency/buildings`,
-        { page, limit },
+        { page, limit, search },
         headers
       ),
     enabled: !!token && !!page && !!limit,

@@ -317,10 +317,11 @@ async def get_building_summary(
 async def get_all_buildings_summary(
     page: int = 1,
     limit: int = 100,
+    search: str = None,
     current_user: AuthUser = Depends(get_current_user),
     efficiency_service: EfficiencyService = Depends(get_efficiency_service),
 ):
-    """Get summary for all buildings with pagination"""
+    """Get summary for all buildings with pagination and search"""
     try:
         # Validate pagination parameters
         if page < 1:
@@ -335,7 +336,7 @@ async def get_all_buildings_summary(
             )
         
         skip = (page - 1) * limit
-        summaries, total_count = await efficiency_service.get_all_buildings_summary(skip, limit)
+        summaries, total_count = await efficiency_service.get_all_buildings_summary(skip, limit, search)
         
         # Convert to response format
         building_summaries = []
