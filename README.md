@@ -2,6 +2,10 @@
 
 An application for tracking and analyzing building energy efficiency metrics. Built with FastAPI, Next.js, MongoDB, and Redis, featuring efficient calculations, data visualization, and performance analytics.
 
+## 🌐 Live Demo
+
+**🚀 [View Live Application](https://energy-efficiency-tracker.vercel.app/)**
+
 ## 🚀 Features
 
 ### Core Functionality
@@ -18,6 +22,32 @@ An application for tracking and analyzing building energy efficiency metrics. Bu
 - **Responsive Design** - Mobile-first UI with Tailwind CSS
 - **Type Safety** - Full TypeScript implementation
 - **Form Validation** - Zod schema validation for data integrity
+
+## 📸 Screenshots
+
+### Buildings Management
+![Buildings Overview](screenshots/Buildings.png)
+*Main buildings table with search, pagination, and building management features*
+
+### Calculation Form
+![Add Calculation](screenshots/Add%20Calculation.png)
+*Dynamic form for adding new energy efficiency calculations with multiple periods*
+
+### Building Details - Summary
+![Building Calculation Summary](screenshots/Building%20Calculation%20Summary.png)
+*Building overview showing key performance metrics and efficiency summary*
+
+### Building Details - Latest Calculation
+![Building Latest Calculation](screenshots/Building%20Latest%20Calculation.png)
+*Detailed view of the most recent calculation with period breakdown*
+
+### Building Details - History
+![Building Calculation History](screenshots/Building%20Calculation%20History.png)
+*Historical view of all calculations for a specific building*
+
+### Building Details - Charts
+![Building Calculation Charts](screenshots/Building%20Calculation%20Charts.png)
+*Data visualization showing efficiency improvements and cost savings*
 
 ## 🏗️ Architecture
 
