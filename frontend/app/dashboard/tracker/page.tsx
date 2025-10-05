@@ -7,7 +7,7 @@ import BuildingDetails from "@/components/efficiency/building-details"
 import BuildingsTable from "@/components/efficiency/buildings-table"
 import EfficiencyForm from "@/components/efficiency/efficiency-form"
 
-const AnalyticsPage = () => {
+const TrackerPage = () => {
   const [selectedBuildingId, setSelectedBuildingId] = useState<string | null>(
     null
   )
@@ -71,4 +71,4 @@ const AnalyticsPage = () => {
   )
 }
 
-export default AnalyticsPage
+export default TrackerPage

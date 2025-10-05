@@ -2,6 +2,7 @@
 
 import { useMeStore } from "@/providers/me-store-provider"
 import { IconDotsVertical, IconLogout } from "@tabler/icons-react"
+import { signOut } from "@/lib/action"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -25,8 +26,6 @@ export function NavUser() {
 
   const meInfo = useMeStore((state) => state.meInfo)
   const user = meInfo?.user
-
-  console.log(meInfo)
 
   return (
     <SidebarMenu>
@@ -75,9 +74,8 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup></DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={signOut}>
               <IconLogout />
               Log out
             </DropdownMenuItem>

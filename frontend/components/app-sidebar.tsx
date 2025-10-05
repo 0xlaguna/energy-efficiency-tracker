@@ -22,14 +22,9 @@ import { NavUser } from "@/components/nav-user"
 const data = {
   navMain: [
     {
-      title: "Efficiency",
-      url: "/dashboard/efficiency",
+      title: "Tracker",
+      url: "/dashboard/tracker",
       icon: IconDashboard,
-    },
-    {
-      title: "Analytics",
-      url: "/dashboard/analytics",
-      icon: IconChartBar,
     },
   ],
 }
