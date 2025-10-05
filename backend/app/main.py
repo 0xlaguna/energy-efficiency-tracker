@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.api.routes import health_router, user_router, auth_router
+from app.api.routes.efficiency.efficiency import router as efficiency_router
 
 from app.infrastructure.logging import configure_logging, get_logger
 from app.infrastructure.database import database
@@ -55,3 +56,4 @@ app.add_middleware(
 app.include_router(health_router, prefix=API_PREFIX)
 app.include_router(user_router, prefix=API_PREFIX)
 app.include_router(auth_router, prefix=API_PREFIX)
+app.include_router(efficiency_router, prefix=API_PREFIX)

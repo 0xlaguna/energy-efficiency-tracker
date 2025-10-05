@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 
-import { MeInfo } from "@/types/v0/users"
+import { BuildingEfficiencySummary } from "@/types/v0/efficiency"
 import { GET } from "@/lib/api/api-client"
 
-const useInitialGetMe = () => {
+const useBuildingSummary = (buildingId: string) => {
   const [bearerToken, setBearerToken] = useState<string | null>(null)
 
   useEffect(() => {
@@ -26,22 +26,26 @@ const useInitialGetMe = () => {
   }
 
   const { isError, error, isLoading, isSuccess, data, refetch } = useQuery<
-    MeInfo,
+    BuildingEfficiencySummary,
     Error
   >({
-    queryKey: ["users-initial-getme"],
-    queryFn: () => GET<MeInfo>("/users/me", {}, headers),
-    enabled: !!token,
+    queryKey: ["efficiency-building-summary", buildingId],
+    queryFn: () =>
+      GET<BuildingEfficiencySummary>(
+        `/efficiency/building/${buildingId}/summary`,
+        {},
+        headers
+      ),
+    enabled: !!token && !!buildingId,
   })
 
   return {
-    getMeError: isError,
-    getMeErrorData: error,
-    getMeLoading: isLoading || !token,
-    getMeSuccess: isSuccess,
-    getMeData: data,
-    getMeSession: bearerToken,
+    buildingSummaryError: isError,
+    buildingSummaryErrorData: error,
+    buildingSummaryLoading: isLoading || !token,
+    buildingSummarySuccess: isSuccess,
+    buildingSummaryData: data,
   }
 }
 
-export default useInitialGetMe
+export default useBuildingSummary

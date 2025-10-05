@@ -34,6 +34,30 @@ class Database:
         await self.database.auth_users.create_index("email", unique=True)
         await self.database.auth_users.create_index("created_at")
         await self.database.auth_users.create_index("is_active")
+        
+        # Efficiency calculations indexes
+        await self.database.efficiency_calculations.create_index("building_id")
+        await self.database.efficiency_calculations.create_index("created_at")
+        
+        # Compound indexes for common queries
+        await self.database.efficiency_calculations.create_index([
+            ("building_id", 1), ("created_at", -1)
+        ])
+        await self.database.efficiency_calculations.create_index([
+            ("building_id", 1), ("periods.period", 1), ("created_at", -1)
+        ])
+        
+        # Partial index for high-performance calculations (A and B grades)
+        await self.database.efficiency_calculations.create_index(
+            [("building_id", 1), ("summary.performance_grade", 1)],
+            partialFilterExpression={"summary.performance_grade": {"$in": ["A", "B"]}}
+        )
+        
+        # Sparse index for measure names (only when present)
+        await self.database.efficiency_calculations.create_index(
+            [("building_id", 1), ("measure_name", 1)],
+            sparse=True
+        )
 
 
 database = Database()

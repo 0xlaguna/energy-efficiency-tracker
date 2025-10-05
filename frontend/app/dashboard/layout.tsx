@@ -1,8 +1,10 @@
 "use client"
 
+import { useEffect } from "react"
 import { MeStoreProvider } from "@/providers/me-store-provider"
 import { MeState } from "@/stores/me-store"
 
+import { signOut } from "@/lib/action"
 import useInitialGetMe from "@/hooks/data/useGetInitialGetMe"
 import { Icons } from "@/components/icons"
 
@@ -13,10 +15,17 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { getMeData, getMeLoading } = useInitialGetMe()
+  const { getMeData, getMeLoading, getMeErrorData } = useInitialGetMe()
 
-  console.log(getMeData)
-  console.log(getMeLoading)
+  useEffect(() => {
+    if (getMeErrorData) {
+      const data = getMeErrorData as Record<string, any>
+      if (data.response?.status === 404) {
+        console.log("Will logout because of 404")
+        signOut()
+      }
+    }
+  }, [getMeErrorData])
 
   if (getMeLoading) {
     return (

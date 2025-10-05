@@ -2,12 +2,14 @@ from fastapi import Depends
 
 from app.application.services.user_service import UserService
 from app.application.services.auth_service import AuthService
+from app.application.services.efficiency_service import EfficiencyService
 
 from app.domain.ports.cache_service import CacheService
 from app.infrastructure.cache import cache_service
 
 from app.domain.ports.user_repository import UserRepository
 from app.domain.ports.auth_repository import AuthRepository
+from app.domain.ports.efficiency_repository import EfficiencyRepository
 
 from app.domain.ports.password_service import PasswordService
 from app.domain.ports.token_service import TokenService
@@ -16,6 +18,7 @@ from app.infrastructure.services.token_service import JWTTokenService
 
 from app.infrastructure.repositories.user_repository import MongoDBUserRepository
 from app.infrastructure.repositories.auth_repository import MongoAuthRepository
+from app.infrastructure.repositories.efficiency_repository import MongodbEfficiencyRepository
 
 
 
@@ -59,3 +62,16 @@ def get_auth_service(
 ) -> AuthService:
     """Get auth service instance with dependencies"""
     return AuthService(auth_repository, password_service, token_service)
+
+
+def get_efficiency_repository() -> EfficiencyRepository:
+    """Get efficiency repository instance"""
+    return MongodbEfficiencyRepository()
+
+
+def get_efficiency_service(
+    efficiency_repository: EfficiencyRepository = Depends(get_efficiency_repository),
+    cache_service: CacheService = Depends(get_cache_service),
+) -> EfficiencyService:
+    """Get efficiency service instance with dependencies"""
+    return EfficiencyService(efficiency_repository, cache_service)

@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation"
+
 const Page = () => {
-  return <p>Hello from Dash</p>
+  return redirect("/dashboard/tracker")
 }
 
 export default Page
