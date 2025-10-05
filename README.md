@@ -2,6 +2,10 @@
 
 An application for tracking and analyzing building energy efficiency metrics. Built with FastAPI, Next.js, MongoDB, and Redis, featuring efficient calculations, data visualization, and performance analytics.
 
+## 🌐 Live Demo
+
+**🚀 [View Live Application](https://energy-efficiency-tracker.vercel.app/)**
+
 ## 🚀 Features
 
 ### Core Functionality
